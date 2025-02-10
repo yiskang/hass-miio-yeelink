@@ -1,7 +1,8 @@
 {
   "domain": "miio_yeelink",
   "name": "Miio For Yeelink",
-  "version": "0.1.14",
+  "version": "0.1.15",
+  "homeassistant": "2025.1.0",
   "config_flow": true,
   "documentation": "https://github.com/al-one/hass-miio-yeelink",
   "issue_tracker": "https://github.com/al-one/hass-miio-yeelink/issues",

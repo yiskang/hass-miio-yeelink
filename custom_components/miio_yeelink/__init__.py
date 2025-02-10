@@ -28,11 +28,9 @@ from homeassistant.components.light import (
 )
 from homeassistant.components.fan import (
     FanEntity,
-    SUPPORT_SET_SPEED,
-    SUPPORT_DIRECTION,
-    SUPPORT_OSCILLATE,
+    FanEntityFeature,
     DIRECTION_FORWARD,
-    DIRECTION_REVERSE,
+    DIRECTION_REVERSE
 )
 
 from miio import (
@@ -589,7 +587,7 @@ class BathHeaterEntity(MiioEntity, FanEntity):
         self._unique_id = f'{self._miio_info.model}-{self._miio_info.mac_address}-{mode}'
         self._mode = mode
         self._parent = parent
-        self._supported_features = SUPPORT_SET_SPEED
+        self._supported_features = FanEntityFeature.SET_SPEED
         self._props = [
             'power', 'bright', 'delayoff', 'nl_br', 'nighttime',
             'bh_mode', 'bh_delayoff', 'light_mode', 'fan_speed_idx',
@@ -605,12 +603,12 @@ class BathHeaterEntity(MiioEntity, FanEntity):
 
     async def async_added_to_hass(self):
         cfg = self.custom_config(with_parent=True) or {}
-        if cfg.get('support_oscillate'):
-            self._supported_features |= SUPPORT_OSCILLATE
+        if cfg.get('FanEntityFeature.OSCILLATE'):
+            self._supported_features |= FanEntityFeature.OSCILLATE
             if 'swing_action' not in self._props:
                 self._props.append('swing_action')
-        if cfg.get('support_direction'):
-            self._supported_features |= SUPPORT_DIRECTION
+        if cfg.get('FanEntityFeature.DIRECTION'):
+            self._supported_features |= FanEntityFeature.DIRECTION
             if 'swing_angle' not in self._props:
                 self._props.append('swing_angle')
 
@@ -775,7 +773,7 @@ class BathHeaterEntityV3(BathHeaterEntity):
 
     def __init__(self, config, mode='warmwind', parent=None):
         super().__init__(config, mode, parent)
-        self._supported_features = SUPPORT_SET_SPEED | SUPPORT_OSCILLATE | SUPPORT_DIRECTION
+        self._supported_features = FanEntityFeature.SET_SPEED | FanEntityFeature.OSCILLATE | FanEntityFeature.DIRECTION
         self._props = ['bright', 'delayoff', 'nighttime', 'bh_mode', 'bh_delayoff']
         self._state_attrs.update({'entity_class': self.__class__.__name__})
 
@@ -838,7 +836,7 @@ class BathHeaterEntityV3(BathHeaterEntity):
 class BathHeaterEntityV5(BathHeaterEntity):
     def __init__(self, config, mode='warmwind', parent=None):
         super().__init__(config, mode, parent)
-        self._supported_features = SUPPORT_SET_SPEED | SUPPORT_OSCILLATE | SUPPORT_DIRECTION
+        self._supported_features = FanEntityFeature.SET_SPEED | FanEntityFeature.OSCILLATE | FanEntityFeature.DIRECTION
         self._props = ['power', 'bh_mode', 'fan_speed_idx', 'swing_action', 'swing_angle', 'bh_cfg_delayoff',
                        'bh_delayoff', 'light_cfg_delayoff', 'delayoff', 'aim_temp']
         self._state_attrs.update({'entity_class': self.__class__.__name__})
@@ -918,7 +916,7 @@ class BathHeaterEntityV5(BathHeaterEntity):
 class VenFanEntity(BathHeaterEntity):
     def __init__(self, config, mode='coolwind'):
         super().__init__(config, mode)
-        self._supported_features = SUPPORT_SET_SPEED | SUPPORT_OSCILLATE | SUPPORT_DIRECTION
+        self._supported_features = FanEntityFeature.SET_SPEED | FanEntityFeature.OSCILLATE | FanEntityFeature.DIRECTION
         self._props = ['bh_mode', 'gears', 'swing_action', 'swing_angle', 'bh_delayoff', 'anion_onoff', 'init_fan_opt']
         self._state_attrs.update({'entity_class': self.__class__.__name__})
 
@@ -1091,7 +1089,7 @@ class MiotFanEntity(MiotEntity, FanEntity):
         self._device = MiotDevice(ip=host, token=token, mapping=self.mapping)
         super().__init__(name, self._device)
         self._unique_id = f'{self._miio_info.model}-{self._miio_info.mac_address}-fan'
-        self._supported_features = SUPPORT_SET_SPEED
+        self._supported_features = FanEntityFeature.SET_SPEED
         self._state_attrs.update({'entity_class': self.__class__.__name__})
 
     async def async_turn_on(self, speed=None, **kwargs):
